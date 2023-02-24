@@ -9,24 +9,25 @@ public class pro2
         while(sc.hasNext(" "))
             System.out.println(sc.nextLine());*/
             
-        int[][] array1 = {{3,4,3},{2,3,4},{1,3,5}};
-        int[]   constant1= {10,7,15};
+        double[][] array1 = {{3,4,3},{1,5,-1},{6,3,7}};
+        double[]   constant1= {10,7,15};
         NaiveGaussian(array1, constant1);
         for(int i = 0; i <= array1.length-1; i++)
         {
-            System.out.print(array1[i]+ " ");
+            System.out.print(constant1[i]+ " ");
         }
 
     }   
-    public static void FwdElimination (int coeff[][], int constant[]) 
+    public static void FwdElimination (double[][] coeff, double[] constant) 
     {
-        int n = constant.length-1;
-        for (int k = 0; k < n; k++)
+        int n = constant.length;
+        for (int k = 0; k <= n-2; k++)
         {
-            for(int i = k+1; i < n ; i++)
+            for(int i = k+1; i <= n-1 ; i++)
             {
-                int mult = coeff[i][k] / coeff[k][k];
-                for(int j = k;j < n ; j++)
+                double mult = coeff[i][k] / coeff[k][k];
+                coeff[i][k] = mult;
+                for(int j = k;j < n-1; j++)
                 {
                     coeff[i][j] = coeff[i][j] - mult * coeff[k][j]; 
                 }
@@ -35,24 +36,24 @@ public class pro2
         }
             
     }
-    public static void BackSubst(int coeff[][], int constant [], int solution[])
+    public static void BackSubst(double[][] coeff, double[] constant, double[] solution)
     {
-        int n = constant.length-1;
-        solution[n] = constant[n] / coeff[n][n];
-        for (int i = 0; i < n-1; i++ )
+        int n = constant.length;
+        solution[n-1] = constant[n-1] / coeff[n-1][n-1];
+        for (int i = n-1 ; i > 0 ; i-- )
         {
-            int sum = constant[i];
-            for(int j = i+1;j <n ; j++ )
+            double sum = constant[i];
+            for(int j = i;j <= n-1 ; j++ )
             {
-                sum = sum - coeff[i][j] * solution[j];
+                sum = sum - (coeff[i][j] * solution[j]);
             }
             solution[i] = sum / coeff[i][i];
         }
     }
-    public static void NaiveGaussian(int coeff[][], int constant[])
+    public static void NaiveGaussian(double coeff[][], double constant[])
     {
         int n = constant.length;
-        int solution[] = new int[n];
+        double solution[] = new double[n];
         FwdElimination(coeff, constant);
         BackSubst(coeff, constant, solution);
         
