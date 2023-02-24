@@ -9,8 +9,10 @@ public class pro2
         while(sc.hasNext(" "))
             System.out.println(sc.nextLine());*/
             
-        double[][] array1 = {{3,4,3},{1,5,-1},{6,3,7}};
-        double[]   constant1= {10,7,15};
+        double[][] array1 = {{3,4,3},
+                             {1,5,-1},
+                             {6,3,7}};
+        double[]   constant1 = {10,7,15};
         NaiveGaussian(array1, constant1);
         for(int i = 0; i <= array1.length-1; i++)
         {
@@ -20,30 +22,30 @@ public class pro2
     }   
     public static void FwdElimination (double[][] coeff, double[] constant) 
     {
-        int n = constant.length;
-        for (int k = 0; k <= n-2; k++)
+        int n = constant.length-1;
+        for (int k = 1; k < n-1; k++)
         {
-            for(int i = k+1; i <= n-1 ; i++)
+            for(int i = k+1; i < n ; i++)
             {
                 double mult = coeff[i][k] / coeff[k][k];
                 coeff[i][k] = mult;
-                for(int j = k;j < n-1; j++)
+                for(int j = k+1; j < n; j++)
                 {
-                    coeff[i][j] = coeff[i][j] - mult * coeff[k][j]; 
+                    coeff[i][j] = coeff[i][j] - (mult * coeff[k][j]); 
                 }
-            constant[i] = constant[i] - mult * constant[k];
+            constant[i] = constant[i] - (mult * constant[k]);
             }
         }
             
     }
     public static void BackSubst(double[][] coeff, double[] constant, double[] solution)
     {
-        int n = constant.length;
-        solution[n-1] = constant[n-1] / coeff[n-1][n-1];
+        int n = constant.length-1;
+        solution[n] = constant[n] / coeff[n][n];
         for (int i = n-1 ; i > 0 ; i-- )
         {
             double sum = constant[i];
-            for(int j = i;j <= n-1 ; j++ )
+            for(int j = i+1;j < n ; j-- )
             {
                 sum = sum - (coeff[i][j] * solution[j]);
             }
