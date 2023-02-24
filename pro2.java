@@ -1,82 +1,84 @@
 import java.util.*;
+
+import javax.management.openmbean.ArrayType;
+
 import java.io.*;
 public class pro2 
 {
     public static void main (String[] args) throws Exception
     {
         Scanner keyboard = new Scanner(System.in);
-        int N = 0; // Must initialize size n
-        double[][] a = new double[N][N+1];
         System.out.print("Enter file name: ");
         String fileName = keyboard.nextLine();
+        /*if(fileName == "--spp")
+        {
+            boolean spp = true;
+        }*/
         File file = new File(fileName);
         if (!file.exists()) // Checks if file entered exists
         {
             System.out.println("File does not exist, exiting");
             System.exit(0);
         }
-        Scanner inputFile = new Scanner(file);
-        while(inputFile.hasNextLine())
-        {
-            N++; // Count number of rows in file
-            inputFile.nextLine();
-        }
+        double[][] Coeff;
+        double[] Constants;
 
-        a = new double[N][N+1];
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 
-        inputFile.close();
-        inputFile = new Scanner(file);
-        for(int i =0; i < N+1; i++ )
-        {
-            if(i=0)
-            {
+            // Count number of lines in file
+            int lines = 0;
+            while (br.readLine() != null) lines++;
+            br.close();
 
-            }
-            for(int j =0; j < N+1; j++)
-            {
-                if(inputFile.hasNextInt())
-                {
-                    a[i][j] = inputFile.nextDouble();
+            // Initialize arrays
+            Coeff = new double[lines-1][];
+            Constants = new double[0];
+
+            // Read file again and store values into arrays
+            BufferedReader brr = new BufferedReader(new FileReader(fileName));
+            String line;
+            int i = 0;
+            while ((line = brr.readLine()) != null) {
+                String[] values = line.split(" ");
+                double[] row = new double[values.length];
+                for (int j = 0; j < values.length; j++) {
+                    row[j] = Double.parseDouble(values[j]);
                 }
+                if (i < lines-1) {
+                    Coeff[i] = row;
+                } else {
+                    Constants = row;
+                }
+                i++;
             }
-        }
-        inputFile.close();
-        
+            brr.close();
+            System.out.println("Coeff:");
+            for (double[] row : Coeff) {
+                for (double value : row) {
+                    System.out.print(value + " ");
+                }
+                System.out.println();
+            }
+
+            System.out.println("Constants:");
+            for (double value : Constants) {
+                System.out.print(value + " ");
+            }
+            System.out.println();
 
         
-
-
         keyboard.close();
-
-
-
-
-
-
-        double[][] array1 = {{3,4,3},
-                             {1,5,-1},
-                             {6,3,7}};
-        
-        double[]   constant1 = {10,7,15};
-        int n = constant1.length;
+        int n = Constants.length;
         double[] solution= new double[n];
-        solution = NaiveGaussian(array1, constant1);
-        for(int i = 0; i <= array1.length-1; i++)
+        solution = SPPGaussian(Coeff, Constants);
+        System.out.println("The solutions are : ");
+        for(int p = 0; p <= Coeff.length-1; p++)
         {
-            System.out.print(solution[i]+ " ");
+            System.out.print(solution[p]+ " ");
         }
-        double[][] array2 = {{3,4,3},
-                             {1,5,-1},
-                             {6,3,7}};
-        double[]   constant2 = {10,7,15};
-        solution = SPPGaussian(array2,constant2);
-        System.out.println();
-        for(int i = 0; i <= array1.length-1; i++)
-        {
-            System.out.print(solution[i]+ " ");
         }
 
-    }   
+    }     
     public static void FwdElimination (double[][] coeff, double[] constant) 
     {
         int n = constant.length-1;
@@ -136,7 +138,7 @@ public class pro2
         {
             double rmax = 0;
             int maxIndex = k;
-            for(int i = k; i <= n-1; i++)
+            for(int i = k; i <= n; i++)
             {
                 double r = Math.abs(coeff[ind[i]][k]/scaling[ind[i]]) ;
                 if(r>rmax)
@@ -167,10 +169,10 @@ public class pro2
     {
         int n = constant.length-1;
         sol[n] = constant[ind[n]]/ coeff[ind[n]][n];
-        for (int i =1; i<n-1 ;i++ )
+        for (int i = n-1; i >= 0 ;i-- )
         {
             double sum = constant[ind[i]];
-            for(int j = i+1; j<n; j++)
+            for(int j = i+1; j<=n; j++)
             {
                 sum = sum - coeff[ind[i]][j] * sol[j];
             }
