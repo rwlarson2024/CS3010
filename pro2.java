@@ -4,11 +4,55 @@ public class pro2
 {
     public static void main (String[] args) throws Exception
     {
-       /*  File file = new File("sys1.lin");
-        Scanner sc = new Scanner(file);
-        while(sc.hasNext(" "))
-            System.out.println(sc.nextLine());*/
-            
+        Scanner keyboard = new Scanner(System.in);
+        int N = 0; // Must initialize size n
+        double[][] a = new double[N][N+1];
+        System.out.print("Enter file name: ");
+        String fileName = keyboard.nextLine();
+        File file = new File(fileName);
+        if (!file.exists()) // Checks if file entered exists
+        {
+            System.out.println("File does not exist, exiting");
+            System.exit(0);
+        }
+        Scanner inputFile = new Scanner(file);
+        while(inputFile.hasNextLine())
+        {
+            N++; // Count number of rows in file
+            inputFile.nextLine();
+        }
+
+        a = new double[N][N+1];
+
+        inputFile.close();
+        inputFile = new Scanner(file);
+        for(int i =0; i < N+1; i++ )
+        {
+            if(i=0)
+            {
+
+            }
+            for(int j =0; j < N+1; j++)
+            {
+                if(inputFile.hasNextInt())
+                {
+                    a[i][j] = inputFile.nextDouble();
+                }
+            }
+        }
+        inputFile.close();
+        
+
+        
+
+
+        keyboard.close();
+
+
+
+
+
+
         double[][] array1 = {{3,4,3},
                              {1,5,-1},
                              {6,3,7}};
@@ -21,7 +65,11 @@ public class pro2
         {
             System.out.print(solution[i]+ " ");
         }
-        solution = SPPGaussian(array1,constant1);
+        double[][] array2 = {{3,4,3},
+                             {1,5,-1},
+                             {6,3,7}};
+        double[]   constant2 = {10,7,15};
+        solution = SPPGaussian(array2,constant2);
         System.out.println();
         for(int i = 0; i <= array1.length-1; i++)
         {
