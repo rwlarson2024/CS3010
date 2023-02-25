@@ -1,19 +1,20 @@
 import java.util.*;
-
-import javax.management.openmbean.ArrayType;
-
 import java.io.*;
 public class pro2 
 {
     public static void main (String[] args) throws Exception
     {
         Scanner keyboard = new Scanner(System.in);
+        boolean spp = false;
+        System.out.println("--spp?(--spp or enter)");
+        String choice = keyboard.nextLine();
+        String checkChoice = "--spp";
+        if(choice.equals(checkChoice))
+        {
+            spp = true;
+        }
         System.out.print("Enter file name: ");
         String fileName = keyboard.nextLine();
-        /*if(fileName == "--spp")
-        {
-            boolean spp = true;
-        }*/
         File file = new File(fileName);
         if (!file.exists()) // Checks if file entered exists
         {
@@ -38,7 +39,8 @@ public class pro2
             BufferedReader brr = new BufferedReader(new FileReader(fileName));
             String line;
             int i = 0;
-            while ((line = brr.readLine()) != null) {
+            while ((line = brr.readLine()) != null) 
+            {
                 String[] values = line.split(" ");
                 double[] row = new double[values.length];
                 for (int j = 0; j < values.length; j++) {
@@ -52,7 +54,7 @@ public class pro2
                 i++;
             }
             brr.close();
-            System.out.println("Coeff:");
+            /*System.out.println("Coeff:");
             for (double[] row : Coeff) {
                 for (double value : row) {
                     System.out.print(value + " ");
@@ -66,19 +68,41 @@ public class pro2
             }
             System.out.println();
 
-        
+        */
         keyboard.close();
         int n = Constants.length;
         double[] solution= new double[n];
-        solution = SPPGaussian(Coeff, Constants);
+        if(spp == true)
+        {
+            solution = SPPGaussian(Coeff, Constants);
+        }
+        else
+        {
+            solution = NaiveGaussian(Coeff, Constants);
+        }
+        String outputFile = "sys1.sol"; 
+        write(outputFile, solution);
+        /* 
         System.out.println("The solutions are : ");
         for(int p = 0; p <= Coeff.length-1; p++)
         {
             System.out.print(solution[p]+ " ");
-        }
+        }*/
         }
 
-    }     
+    } 
+    public static void write(String outputFile, double[] solutions) throws IOException
+    {
+        BufferedWriter out = null;
+        out = new BufferedWriter(new FileWriter(outputFile));
+        for(int i =0; i < solutions.length; i++)
+        {
+            out.write(solutions[i]+" ");
+            out.newLine();
+        }
+        out.flush();
+        out.close();
+    }    
     public static void FwdElimination (double[][] coeff, double[] constant) 
     {
         int n = constant.length-1;
@@ -87,7 +111,6 @@ public class pro2
             for(int i = k+1; i <= n ; i++)
             {
                 double mult = coeff[i][k] / coeff[k][k];
-                //coeff[i][k] = mult;
                 for(int j = k; j <= n; j++)
                 {
                     coeff[i][j] = coeff[i][j] - (mult * coeff[k][j]); 
