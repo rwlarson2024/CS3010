@@ -1,18 +1,51 @@
 package Project3;
 import Project2.Main;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
+import java.util.function.DoubleFunction;
+
 public class project3 
 {
-    public static void main(String[] args) 
+    public static void main(String[] args) throws Exception
     {
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Enter file name: ");
+        String fileName = keyboard.nextLine();
+        File file = new File(fileName);
+        if(!file.exists())
+        {
+            System.out.println("file does not exsist");
+            System.exit(0);
+        }
+        float degree;
+        float[] coeffx;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) 
+        {
+            int lines = 0; 
+            while(br.readLine() != null) lines++;
+            br.close();
+            
+        }
+        
+
+        
+
 
     }
+    
     static float f (double x)
     {
         Double re = Math.pow(x, 3) - Math.pow(x,2) +2;
         float ree = re.floatValue();
         return ree;
     }
+  
+
+
+
     public float bisection(float f, float a, float b, int maxint, float esp)
     {
         float fa = f(a);
