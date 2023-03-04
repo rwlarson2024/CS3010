@@ -119,15 +119,19 @@ public class project3
 
 
 
-    public double bisection(double[] f, double d, double a, double b, int maxint, Double esp)
+    public double[] bisection(double[] f, double d, double a, double b, int maxint, double esp)
     {
+        double[] solutions = new double[3];
+        solutions[0] = 0;
+        solutions[1] = 0;
+        solutions[2] = 0;
         double fa = f(f,d,a);
         double fb = f(f,d,b);
 
         if (fa * fb >= 0)
         {
             System.out.println("inadepuate values for a and b.");
-            return -1;
+            return solutions;
         }
         double error = b - a;
         for(int i = 0; i<= maxint; i++)
@@ -139,7 +143,12 @@ public class project3
             if(Math.abs(error) < esp || fc == 0  )
             {
                 System.out.println("algorithm has converged after " + i + " iterations!");
-                return c;
+                solutions[0] = c; 
+                solutions[1] = i;
+                solutions[2] = 1; 
+
+
+                return solutions;
             }
             if(fa *fc < 0)
             {
@@ -153,42 +162,57 @@ public class project3
             }
         }
         System.out.print("max iterations reached without convergence ...");
-        return -1;
+        solutions[0] = 0; 
+        solutions[1] = maxint;
+        solutions[2] = -1;
+
+        return solutions;
     }
-    public float newtons(float f, float derF, float x, int maxInt, float eps, float delta)
+    public double[] newtons(double[] f, double derF, double x, double degree, int maxInt, double eps, double delta)
     {
-        float fx = f(x);
-        for(int i = 0; i<= maxInt)
+        double[] solutions = new double[3];
+        solutions[0] = 0;
+        solutions[1] = 0;
+        solutions[2] = 0;
+        double fx = f(f,degree,x);
+        for(int i = 0; i<= maxInt; i++)
         {
-            float fd = derF(x);
+            double fd = derivative(f,degree,x);
             if(Math.abs(fd) < delta)
             {
                 System.out.println("small slope! ");
-                return x;
+                return solutions;
             }
-            float d = fx /fd;
+            double d = fx /fd;
             x = x - d;
-            fx = f(x);
+            fx = f(f,degree,x);
             if(Math.abs(d) < eps)
             {
                 System.out.println("algorithm has converged after "+ i +" iterations");
-                return x;
+                solutions[0] = x;
+                solutions[1] = i;
+                solutions[2] = 1;
+                return solutions;
             }
         }
         System.out.println("max itertations reached without convergence ...");
-        return x;
+        return solutions;
     }
-    public float secant(float f, float a, float b, int maxInt, float eps)
+    public double[] secant(double[] f, double a, double b,double degree, int maxInt, double eps )
     {
-        float fa = f(a);
-        float fb = f(b);
+        double[] solutions = new double[3];
+        solutions[0] = 0;
+        solutions[1] = 0;
+        solutions[2] = 0;
+        double fa = f(f,degree,a);
+        double fb = f(f,degree,b);
         for(int i = 0; i < maxInt; i++)
         {
             if(Math.abs(fa) > Math.abs(f(b)))
             {
-
+                //swap
             }
-            float d = (b-a)/ (fb - fa);
+            double d = (b-a)/ (fb - fa);
             b = a;
             fb = fa;
             d = d * fa;
@@ -198,9 +222,9 @@ public class project3
                 return a;
             }
             a = a -d;
-            fa = f(a);
+            fa = f(f,degree,a);
         }
         System.out.println("Maximum number of iterations reached!");
-        return a;
+        return solutions;
     }
 }
