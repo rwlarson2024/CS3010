@@ -7,22 +7,82 @@ public class project3
 {
     public static void main(String[] args) throws Exception
     {
-        Scanner keyboard = new Scanner(System.in);
-        System.out.println("Enter file name: ");
-        String fileName = keyboard.nextLine();
+        boolean newt = false;
+        boolean sec = false;
+        boolean hybrid = false;
+        boolean bisect = true;
+        double iterationsStart = 10000;
+        String fileName = null;
+        //reads user's input from commandline and checks for all the different flags that change what version of 
+        //calculations that are conducted.
+        for (int i = 0; i < args.length; i++)
+        {
+            String arg = args[i];
+            switch (arg)
+            {
+                case "-newt":
+                    newt = true;
+                    break;
+                case "-sec":
+                    sec = true;
+                    break;
+                case "-hybrid":
+                    hybrid = true;
+                    break;
+                case "-maxIt":
+                    if(i + 1 <args.length && args[i+1].matches("\\d+") )
+                    {
+                        iterationsStart = Double.parseDouble(args[i+1]);
+                        i++;
+                    }
+                    else
+                    {
+                        System.err.println("invalid argument for -maxIt ....");
+                        System.exit(1);
+                    }
+                    break;
+                default:
+                if(fileName == null)
+                {
+                    fileName = arg;
+                }
+                else
+                {
+                    System.err.println("invalid argument : " + arg);
+                }
+            }
+            
+        }
         File file = new File(fileName);
         if(!file.exists())
         {
             System.out.println("file does not exsist");
             System.exit(0);
         }
-        float degree;
-        float[] coeffx;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) 
         {
             int lines = 0; 
             while(br.readLine() != null) lines++;
             br.close();
+            double degree;
+            double[] coeffx = new double[lines-1];
+            String line;
+            int i = 0;
+            while ((line = br.readLine())!= null)
+            {
+                String[] values = line.split(" ");
+                for(int j = 1; j <values.length;j++)
+                {
+                    if(i <= 0)
+                    {
+                        degree = Double.parseDouble(values[i]);
+                        i++;
+                    }
+                    coeffx[j] = Double.parseDouble(values[j]);
+                }
+                
+            }
+            double[] solution= new double[3];
             
         }
         
@@ -144,4 +204,3 @@ public class project3
         return a;
     }
 }
-
