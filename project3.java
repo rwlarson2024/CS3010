@@ -1,9 +1,5 @@
-package Project3;
-import Project2.Main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 import java.util.function.DoubleFunction;
 
@@ -36,32 +32,49 @@ public class project3
 
     }
     
-    static float f (double x)
+    static double f (double[] vectorCoeff, double degree, double x)
     {
-        Double re = Math.pow(x, 3) - Math.pow(x,2) +2;
-        float ree = re.floatValue();
-        return ree;
+        int j = 0;
+        double sol=0; 
+        for (double i = degree; i<=0 ; i-- )
+        {
+            sol = sol + (vectorCoeff[j]*(Math.pow(x,i)));
+            j++;
+        }
+        return sol;
     }
-  
-
-
-
-    public float bisection(float f, float a, float b, int maxint, float esp)
+    
+    static double derivative(double[] vectorCoeff, double degree, double x)
     {
-        float fa = f(a);
-        float fb = f(b);
+        int j =0; 
+        double sol = 0; 
+        for(double i = degree; i<=0; i--)
+        {
+            sol = sol + (vectorCoeff[j])*(i)*(Math.pow(x,i-1));
+            j++;
+        }
+        double i =0;
+        return i;
+    }
+
+
+
+    public double bisection(double[] f, double d, double a, double b, int maxint, Double esp)
+    {
+        double fa = f(f,d,a);
+        double fb = f(f,d,b);
 
         if (fa * fb >= 0)
         {
             System.out.println("inadepuate values for a and b.");
             return -1;
         }
-        float error = b - a;
+        double error = b - a;
         for(int i = 0; i<= maxint; i++)
         {
             error = error/2;
-            float c = a + error;
-            float fc = f(c);
+            double c = a + error;
+            double fc = f(f,d,c);
 
             if(Math.abs(error) < esp || fc == 0  )
             {
@@ -131,5 +144,4 @@ public class project3
         return a;
     }
 }
-
 
