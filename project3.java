@@ -13,6 +13,11 @@ public class project3
         boolean bisect = true;
         double iterationsStart = 10000;
         String fileName = null;
+        double a = 0;
+        double x = 0;
+        double epsilon = 0.00000001;
+        double delta   = 0.00000001;
+
         //reads user's input from commandline and checks for all the different flags that change what version of 
         //calculations that are conducted.
         for (int i = 0; i < args.length; i++)
@@ -41,17 +46,24 @@ public class project3
                         System.exit(1);
                     }
                     break;
-                default:
-                if(fileName == null)
-                {
-                    fileName = arg;
-                }
-                else
-                {
-                    System.err.println("invalid argument : " + arg);
-                }
-            }
-            
+                    default:
+                    // Check if the argument is a number
+                        if (arg.matches("\\d+")) {
+                            if (a == 0) {
+                                a = Integer.parseInt(arg);
+                            } else if (x == 0) {
+                                x = Integer.parseInt(arg);
+                            } else {
+                                System.err.println("Too many integer arguments");
+                                System.exit(1);
+                            }
+                        } else if (fileName == null) {
+                            fileName = arg;
+                        } else {
+                            System.err.println("Invalid argument: " + arg);
+                            System.exit(1);
+                        }
+            }           
         }
         File file = new File(fileName);
         if(!file.exists())
@@ -59,12 +71,13 @@ public class project3
             System.out.println("file does not exsist");
             System.exit(0);
         }
+
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) 
         {
             int lines = 0; 
             while(br.readLine() != null) lines++;
             br.close();
-            double degree;
+            double degree =0;
             double[] coeffx = new double[lines-1];
             String line;
             int i = 0;
@@ -81,9 +94,30 @@ public class project3
                     coeffx[j] = Double.parseDouble(values[j]);
                 }
                 
-            }
+            }        
+            br.close();
             double[] solution= new double[3];
-            
+            if(newt = true)
+            {
+                solution = newtons(coeffx,x,degree,iterationsStart,epsilon,delta);
+                bisect = false;
+            }
+            else if(sec = true)
+            {
+                solution = secant(coeffx,a,x,degree, iterationsStart,epsilon);
+                bisect = false;
+            }
+            else if(hybrid = true)
+            {
+                bisect = false;
+            }
+            else if(bisect = true)
+            {
+                solution = bisection(coeffx, degree, a, x, iterationsStart, epsilon);
+            }
+            String outputFile = "fun1.sol"; 
+            write(outputFile, solution);
+
         }
         
 
@@ -91,7 +125,22 @@ public class project3
 
 
     }
-    
+    public static void write(String outputFile, double[] solutions) throws IOException
+    {
+        BufferedWriter out = null;
+        out = new BufferedWriter(new FileWriter(outputFile));
+        for(int i =0; i < solutions.length; i++)
+        {
+            out.write(solutions[i]+" ");
+            out.newLine();
+        }
+        out.flush();
+        out.close();
+    }
+
+
+
+    //Computing the solution of a polynomial at a specific point x with the degree n
     static double f (double[] vectorCoeff, double degree, double x)
     {
         int j = 0;
@@ -103,7 +152,7 @@ public class project3
         }
         return sol;
     }
-    
+    //Computing the derivative and solution of a polynomial at a specific point x with the degree n
     static double derivative(double[] vectorCoeff, double degree, double x)
     {
         int j =0; 
@@ -118,8 +167,8 @@ public class project3
     }
 
 
-
-    public double[] bisection(double[] f, double d, double a, double b, int maxint, double esp)
+    //bisection method of computation.
+    public static double[] bisection(double[] f, double d, double a, double b, double maxint, double esp)
     {
         double[] solutions = new double[3];
         solutions[0] = 0;
@@ -134,7 +183,7 @@ public class project3
             return solutions;
         }
         double error = b - a;
-        for(int i = 0; i<= maxint; i++)
+        for(double i = 0; i<= maxint; i++)
         {
             error = error/2;
             double c = a + error;
@@ -168,14 +217,16 @@ public class project3
 
         return solutions;
     }
-    public double[] newtons(double[] f, double derF, double x, double degree, int maxInt, double eps, double delta)
+
+    //Newton's method of computation
+    public static double[] newtons(double[] f, double x, double degree, double maxInt, double eps, double delta)
     {
         double[] solutions = new double[3];
         solutions[0] = 0;
         solutions[1] = 0;
         solutions[2] = 0;
         double fx = f(f,degree,x);
-        for(int i = 0; i<= maxInt; i++)
+        for(double i = 0; i<= maxInt; i++)
         {
             double fd = derivative(f,degree,x);
             if(Math.abs(fd) < delta)
@@ -198,7 +249,10 @@ public class project3
         System.out.println("max itertations reached without convergence ...");
         return solutions;
     }
-    public double[] secant(double[] f, double a, double b,double degree, int maxInt, double eps )
+
+
+    //Secant method of computation
+    public static double[] secant(double[] f, double a, double b,double degree, double maxInt, double eps )
     {
         double[] solutions = new double[3];
         solutions[0] = 0;
@@ -206,9 +260,9 @@ public class project3
         solutions[2] = 0;
         double fa = f(f,degree,a);
         double fb = f(f,degree,b);
-        for(int i = 0; i < maxInt; i++)
+        for(double i = 0; i < maxInt; i++)
         {
-            if(Math.abs(fa) > Math.abs(f(b)))
+            if(Math.abs(fa) > Math.abs(fb))
             {
                 //swap
             }
@@ -219,7 +273,9 @@ public class project3
             if(Math.abs(d) < eps)
             {
                 System.err.println("algorith has converged after " + i + " iterations");
-                return a;
+                solutions[0] = d;
+                solutions[1] = i;
+                solutions[2] = 1;
             }
             a = a -d;
             fa = f(f,degree,a);
