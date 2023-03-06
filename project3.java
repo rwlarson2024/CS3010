@@ -2,25 +2,23 @@
 import java.io.*;
 import java.util.*;
 import java.util.function.DoubleFunction;
-
 public class project3 
 {
     public static void main(String[] args) throws Exception
     {
-        boolean newt = false;
+        boolean newt = true;
         boolean sec = false;
         boolean hybrid = false;
-        boolean bisect = true;
+        boolean bisect = false;
         double iterationsStart = 10000;
-        String fileName = null;
+        String fileName = "fun1.pol";
         double a = 0;
         double x = 0;
         double epsilon = 0.00000001;
         double delta   = 0.00000001;
-
         //reads user's input from commandline and checks for all the different flags that change what version of 
         //calculations that are conducted.
-        for (int i = 0; i < args.length; i++)
+        /*for (int i = 0; i < args.length; i++)
         {
             String arg = args[i];
             switch (arg)
@@ -64,41 +62,31 @@ public class project3
                             System.exit(1);
                         }
             }           
-        }
+        }*/
         File file = new File(fileName);
         if(!file.exists())
         {
             System.out.println("file does not exsist");
             System.exit(0);
         }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) 
+        try(BufferedReader br = new BufferedReader(new FileReader(fileName)))
         {
-            int lines = 0; 
-            while(br.readLine() != null) lines++;
-            br.close();
-            double degree =0;
-            double[] coeffx = new double[lines-1];
-            String line;
-            int i = 0;
-            while ((line = br.readLine())!= null)
+            
+            String line = br.readLine();
+            double degree = Double.parseDouble(line);
+            line = br.readLine();
+            String[] doubles = line.split(" ");
+            double[] coeffx = new double[doubles.length];
+            for(int i = 0; i < doubles.length; i++)
             {
-                String[] values = line.split(" ");
-                for(int j = 1; j <values.length;j++)
-                {
-                    if(i <= 0)
-                    {
-                        degree = Double.parseDouble(values[i]);
-                        i++;
-                    }
-                    coeffx[j] = Double.parseDouble(values[j]);
-                }
-                
-            }        
-            br.close();
+                coeffx[i] = Double.parseDouble(doubles[i]);
+            }       
+        
+            //br.close();
             double[] solution= new double[3];
             if(newt = true)
             {
+                x = 2;
                 solution = newtons(coeffx,x,degree,iterationsStart,epsilon,delta);
                 bisect = false;
             }
@@ -117,13 +105,7 @@ public class project3
             }
             String outputFile = "fun1.sol"; 
             write(outputFile, solution);
-
         }
-        
-
-        
-
-
     }
     public static void write(String outputFile, double[] solutions) throws IOException
     {
@@ -137,15 +119,12 @@ public class project3
         out.flush();
         out.close();
     }
-
-
-
     //Computing the solution of a polynomial at a specific point x with the degree n
     static double f (double[] vectorCoeff, double degree, double x)
     {
         int j = 0;
         double sol=0; 
-        for (double i = degree; i<=0 ; i-- )
+        for (double i = degree; i>=0.0 ; i-- )
         {
             sol = sol + (vectorCoeff[j]*(Math.pow(x,i)));
             j++;
@@ -157,16 +136,13 @@ public class project3
     {
         int j =0; 
         double sol = 0; 
-        for(double i = degree; i<=0; i--)
+        for(double i = degree; i>=0; i--)
         {
             sol = sol + (vectorCoeff[j])*(i)*(Math.pow(x,i-1));
             j++;
         }
-        double i =0;
-        return i;
+        return sol;
     }
-
-
     //bisection method of computation.
     public static double[] bisection(double[] f, double d, double a, double b, double maxint, double esp)
     {
@@ -249,8 +225,6 @@ public class project3
         System.out.println("max itertations reached without convergence ...");
         return solutions;
     }
-
-
     //Secant method of computation
     public static double[] secant(double[] f, double a, double b,double degree, double maxInt, double eps )
     {
