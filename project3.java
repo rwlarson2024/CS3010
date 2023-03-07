@@ -6,10 +6,10 @@ public class project3
 {
     public static void main(String[] args) throws Exception
     {
-        boolean newt = true;
+        boolean newt = false;
         boolean sec = false;
-        boolean hybrid = false;
-        boolean bisect = false;
+        boolean hybrid = true;
+        boolean bisect = true;
         double iterationsStart = 10000;
         String fileName = "fun1.pol";
         double a = 0;
@@ -18,7 +18,7 @@ public class project3
         double delta   = 0.00000001;
         //reads user's input from commandline and checks for all the different flags that change what version of 
         //calculations that are conducted.
-        /*for (int i = 0; i < args.length; i++)
+        for (int i = 0; i < args.length; i++)
         {
             String arg = args[i];
             switch (arg)
@@ -62,7 +62,7 @@ public class project3
                             System.exit(1);
                         }
             }           
-        }*/
+        }
         File file = new File(fileName);
         if(!file.exists())
         {
@@ -84,24 +84,26 @@ public class project3
         
             //br.close();
             double[] solution= new double[3];
-            if(newt = true)
+            if(newt == true)
             {
-                x = 2;
                 solution = newtons(coeffx,x,degree,iterationsStart,epsilon,delta);
                 bisect = false;
             }
-            else if(sec = true)
+            else if(sec == true)
             {
                 solution = secant(coeffx,a,x,degree, iterationsStart,epsilon);
                 bisect = false;
             }
-            else if(hybrid = true)
+            else if(hybrid == true)
             {
+                solution = bisectionhybrid(coeffx, x, a, degree, 10.0, epsilon);
+                x = solution[0];
+                solution = newtons(coeffx, x, degree, iterationsStart, epsilon, delta);
                 bisect = false;
             }
-            else if(bisect = true)
+            else if(bisect == true)
             {
-                solution = bisection(coeffx, degree, a, x, iterationsStart, epsilon);
+                solution = bisection(coeffx, a, x, degree, iterationsStart, epsilon);
             }
             String outputFile = "fun1.sol"; 
             write(outputFile, solution);
@@ -144,7 +146,7 @@ public class project3
         return sol;
     }
     //bisection method of computation.
-    public static double[] bisection(double[] f, double d, double a, double b, double maxint, double esp)
+    public static double[] bisection(double[] f, double a, double b, double d, double maxint, double esp)
     {
         double[] solutions = new double[3];
         solutions[0] = 0;
@@ -164,7 +166,7 @@ public class project3
             error = error/2;
             double c = a + error;
             double fc = f(f,d,c);
-
+        
             if(Math.abs(error) < esp || fc == 0  )
             {
                 System.out.println("algorithm has converged after " + i + " iterations!");
@@ -193,7 +195,62 @@ public class project3
 
         return solutions;
     }
+    public static double[] bisectionhybrid(double[] f, double a, double b, double d, double maxint, double esp)
+    {
+        double[] solutions = new double[3];
+        solutions[0] = 0;
+        solutions[1] = 0;
+        solutions[2] = 0;
+        double fa = f(f,d,a);
+        double fb = f(f,d,b);
 
+        if (fa * fb >= 0)
+        {
+            System.out.println("inadepuate values for a and b.");
+            return solutions;
+        }
+        double error = b - a;
+        for(double i = 0; i<= maxint; i++)
+        {
+            error = error/2;
+            double c = a + error;
+            double fc = f(f,d,c);
+            if(i == maxint)
+            {
+                System.out.println("10 iterations have been reached ... switching to newtons");
+                solutions[0] = c; 
+                solutions[1] = i;
+                solutions[2] = 1;
+                return solutions;
+            }
+            if(Math.abs(error) < esp || fc == 0  )
+            {
+                System.out.println("algorithm has converged after " + i + " iterations!");
+                solutions[0] = c; 
+                solutions[1] = i;
+                solutions[2] = 1; 
+
+
+                return solutions;
+            }
+            if(fa *fc < 0)
+            {
+                b = c;
+                fb = fc;
+            }
+            else
+            {
+                a = c;
+                fa = fc;
+            }
+        }
+        System.out.print("max iterations reached without convergence ...");
+        solutions[0] = 0; 
+        solutions[1] = maxint;
+        solutions[2] = -1;
+
+        return solutions;
+    }
     //Newton's method of computation
     public static double[] newtons(double[] f, double x, double degree, double maxInt, double eps, double delta)
     {
@@ -234,11 +291,18 @@ public class project3
         solutions[2] = 0;
         double fa = f(f,degree,a);
         double fb = f(f,degree,b);
+        
         for(double i = 0; i < maxInt; i++)
         {
             if(Math.abs(fa) > Math.abs(fb))
             {
-                //swap
+                double temp = 0;
+                temp = a; 
+                a = b;
+                b = temp;
+                temp = fa;
+                fa = fb; 
+                fb = temp;
             }
             double d = (b-a)/ (fb - fa);
             b = a;
@@ -247,11 +311,12 @@ public class project3
             if(Math.abs(d) < eps)
             {
                 System.err.println("algorith has converged after " + i + " iterations");
-                solutions[0] = d;
+                solutions[0] = a;
                 solutions[1] = i;
                 solutions[2] = 1;
+                return solutions;
             }
-            a = a -d;
+            a = a - d;
             fa = f(f,degree,a);
         }
         System.out.println("Maximum number of iterations reached!");
