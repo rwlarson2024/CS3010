@@ -8,12 +8,12 @@ public class project3
     {
         boolean newt = false;
         boolean sec = false;
-        boolean hybrid = true;
+        boolean hybrid = false;
         boolean bisect = true;
         double iterationsStart = 10000;
         String fileName = "fun1.pol";
         double a = 0;
-        double x = 0;
+        double x = 1;
         double epsilon = 0.00000001;
         double delta   = 0.00000001;
         //reads user's input from commandline and checks for all the different flags that change what version of 
@@ -96,9 +96,9 @@ public class project3
             }
             else if(hybrid == true)
             {
-                solution = bisectionhybrid(coeffx, x, a, degree, 10.0, epsilon);
-                x = solution[0];
-                solution = newtons(coeffx, x, degree, iterationsStart, epsilon, delta);
+                solution = bisectionhybrid(coeffx, x, a, degree, 5.0, epsilon);
+                double hybridX = solution[0];
+                solution = newtons(coeffx, hybridX, degree, iterationsStart, epsilon, delta);
                 bisect = false;
             }
             else if(bisect == true)
@@ -217,7 +217,7 @@ public class project3
             double fc = f(f,d,c);
             if(i == maxint)
             {
-                System.out.println("10 iterations have been reached ... switching to newtons");
+                System.out.println("5 iterations have been reached ... switching to newtons");
                 solutions[0] = c; 
                 solutions[1] = i;
                 solutions[2] = 1;
