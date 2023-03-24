@@ -10,16 +10,20 @@ public class interpolation
 
         File file = new File(filename);
         Scanner fileScanner = new Scanner(file);
+        String line = fileScanner.nextLine();
+        String[] tokens = line.split(" ");
+        int n = tokens.length;
+        fileScanner.close();
 
-        int n = fileScanner.nextInt();
-
+        fileScanner = new Scanner(file);
         double[][] userData = new double[n][2];
         
         for(int i = 0; i < n; i++)
         {
             userData[i][0] = fileScanner.nextDouble();
         }
-        for( int i = 0; i < n;i ++ )
+        fileScanner.nextLine();
+        for( int i = 0; i < n; i++)
         {
             userData[i][1] = fileScanner.nextDouble();
         }
@@ -57,23 +61,6 @@ public class interpolation
             System.out.println("interpolated value at " + x +" is " + fx);
         }
         input.close();
-
     }
 }
-    /*public static double[][] divided_Diff(double[][] data, int n)
-    {
-        double [][] divDiff = new double[n][n];
-        for(int i = 0; i <n; i++)
-        {
-            divDiff[i][0] = data[i][1];
-        }
-        for(int j = 1; j < n; j++)
-        {
-            for(int i = j; i < n; i++)
-            {
-                divDiff[i][j] = (divDiff[i][j-1] - divDiff[i-1][j-1] / data[i][0] -  data[i-j][0]);
-            }
-        }
-        return divDiff;
-    }
-}*/
+    
